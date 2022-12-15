@@ -7,66 +7,58 @@ import book_pb2
 import inventoryService_pb2
 import inventoryService_pb2_grpc
 
-def runCreateValid(stub):
-    print('CREATEBOOK VALID TEST CASE')
+sectionBreak = '======================================================='
+
+def runCreate(stub, caseName, newISBN, newTitle, newAuthor, newYear):
+    print(sectionBreak)
+    print(caseName + '\n')
 
     newBook = book_pb2.Book()
-    newBook.ISBN = '4812162024'
-    newBook.title = 'Book Title 4'
-    newBook.author = 'Book Author 4'
+    if newISBN is not None:
+        newBook.ISBN = newISBN
+    if newTitle is not None:
+        newBook.title = newTitle
+    if newAuthor is not None:
+        newBook.author = newAuthor
+    if newYear is not None:
+        newBook.publishedYear = newYear
     newBook.genre = newBook.Genre.NONFICTION
-    newBook.publishedYear = 2022
-    print('Book:\n' + str(newBook))
-
-    response = stub.CreateBook(inventoryService_pb2.CreateBookRequest(book=newBook))
-    print('Client received: ' + response.message)
-    print()
-
-def runCreateInvalid(stub):
-    print('CREATEBOOK INVALID TEST CASE')
-
-    newBook = book_pb2.Book()
-    newBook.ISBN = '1234567890'
-    print('Book:\n' + str(newBook))
+    print('Input Book:\n' + str(newBook))
 
     try:
         response = stub.CreateBook(inventoryService_pb2.CreateBookRequest(book=newBook))
+        print('Client received: ' + response.message)
     except grpc.RpcError as e:
         print('Client received error:')
         print(f'Error code: {e.code().name} ({e.code().value})')
         print(f'Details: {e.details()}')
+    print(sectionBreak)
 
-def runGetValid(stub):
-    validISBN = '4812162024'
-
-    print('GETBOOK VALID TEST CASE')
-    print(f'GetBook(ISBN={validISBN}): \n')
-
-    response = stub.GetBook(inventoryService_pb2.GetBookRequest(ISBN=validISBN))
-    print('Client received:\n' + str(response.book))
-    print()
-
-def runGetInvalid(stub):
-    invalidISBN = '5101520253'
-
-    print('GETBOOK INVALID TEST CASE')
-    print(f'GetBook(ISBN={invalidISBN}): \n')
+def runGet(stub, caseName, searchISBN):
+    print(sectionBreak)
+    print(caseName + '\n')
 
     try:
-        response = stub.GetBook(inventoryService_pb2.GetBookRequest(ISBN=invalidISBN))
+        response = stub.GetBook(inventoryService_pb2.GetBookRequest(ISBN=searchISBN))
+        print('Client received: ' + str(response.book))
     except grpc.RpcError as e:
         print('Client received error:')
         print(f'Error code: {e.code().name} ({e.code().value})')
         print(f'Details: {e.details()}')
+    print(sectionBreak)
 
 
 def run():
     with grpc.insecure_channel('localhost:50051') as channel:
         stub = inventoryService_pb2_grpc.InventoryServiceStub(channel)
-        runCreateValid(stub)
-        runCreateInvalid(stub)
-        runGetValid(stub)
-        runGetInvalid(stub)
+        # runCreateValid(stub)
+        # runCreateInvalid(stub)
+        runCreate(stub, '1. CREATEBOOK VALID CASE', '4812162024', 'Title 4', 'Author 4', 2022)
+        runCreate(stub, '2. CREATEBOOK INVALID ISBN', '4812162024', None, None, None)
+        # runGetValid(stub)
+        # runGetInvalid(stub)
+        runGet(stub, '3. GETBOOK VALID CASE', '4812162024')
+        runGet(stub, '4. GETBOOK INVALID ISBN', '5101520253')
 
 if __name__ == '__main__':
     logging.basicConfig()
