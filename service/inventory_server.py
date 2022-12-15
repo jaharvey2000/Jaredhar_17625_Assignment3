@@ -21,6 +21,7 @@ class InventoryService(inventoryService_pb2_grpc.InventoryServiceServicer):
         
         # Book doesn't exist; create it
         bookDb[newBook.ISBN] = newBook
+        context.set_code(grpc.StatusCode.OK)
         return inventoryService_pb2.CreateBookReply(message='New book created with ISBN {}'.format(newBook.ISBN))
 
     # GetBook
@@ -34,6 +35,7 @@ class InventoryService(inventoryService_pb2_grpc.InventoryServiceServicer):
             return inventoryService_pb2.GetBookReply()
         
         # Book found; return it
+        context.set_code(grpc.StatusCode.OK)
         return inventoryService_pb2.GetBookReply(book=bookDb[searchISBN])
 
 # Configure server
