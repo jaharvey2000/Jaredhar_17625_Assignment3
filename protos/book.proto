@@ -2,6 +2,10 @@ syntax = "proto3";
 
 package a3;
 
+/* 
+ * Book protobuf uses all optional arguments; however, the server will assert
+ * that all arugments are provided.
+ */
 message Book {
     optional string ISBN = 1;
     optional string title = 2;
