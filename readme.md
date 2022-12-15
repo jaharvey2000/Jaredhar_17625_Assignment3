@@ -12,7 +12,7 @@
 
 This assignment is meant to introduce students to the design and implementation of protocol buffers and gRPC APIs. In this assignment, students must implement a simple book inventory API, which can store and retrieve book objects. Students must use protocol buffers and gRPC to implement this API, utilizing the *protoc* compiler and Python to implement the API.
 
-Students follow a [tutorial]() to learn how to implement their API. However, their API must meet the following specifications:
+Students follow a [tutorial](https://grpc.io/docs/languages/python/quickstart/#generate-grpc-code) to learn how to implement their API. However, their API must meet the following specifications:
 
 * Protocol buffers for "Book" and "InventoryItem" class of objects must be implemented,
 * An "InventoryService" must be implemented, which supports the two following RPCs:
