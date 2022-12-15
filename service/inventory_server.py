@@ -12,9 +12,28 @@ class InventoryService(inventoryService_pb2_grpc.InventoryServiceServicer):
     # CreateBook
     def CreateBook(self, request, context):
         newBook = request.book
+
+        # If the book already exists, return an error
         if newBook.ISBN in bookDb.keys():
-            # Book already exists; return an error
             msg = 'Book already exists with ISBN {}'.format(newBook.ISBN)
+            context.set_details(msg)
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            return inventoryService_pb2.CreateBookReply()
+        
+        # If the book is missing fields, return an error
+        if not (newBook.HasField('ISBN') and newBook.HasField('title') and \
+        newBook.HasField('author') and newBook.HasField('genre') and newBook.HasField('publishedYear')):
+            if not newBook.HasField('ISBN'):
+                msg = 'Book missing field "ISBN"'
+            elif not newBook.HasField('title'):
+                msg = 'Book missing field "title"'
+            elif not newBook.HasField('author'):
+                msg = 'Book missing field "author"'
+            elif not newBook.HasField('genre'):
+                msg = 'Book missing field "genre"'
+            else:
+                msg = 'Book missing field "publishedYear"'
+            
             context.set_details(msg)
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             return inventoryService_pb2.CreateBookReply()
@@ -29,7 +48,7 @@ class InventoryService(inventoryService_pb2_grpc.InventoryServiceServicer):
         searchISBN = request.ISBN
         if searchISBN not in bookDb.keys():
             # Book not found; return an error
-            msg = 'ISBN not found'
+            msg = 'No book with ISBN "{}" exists'.format(searchISBN)
             context.set_details(msg)
             context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             return inventoryService_pb2.GetBookReply()
