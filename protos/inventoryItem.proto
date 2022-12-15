@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package a3;
+
+import "book.proto";
+
+message InventoryItem {
+    optional int32 number = 1;
+
+    oneof object {
+        Book book = 2;
+    }
+
+    enum Status {
+        AVAILABLE = 0;
+        TAKEN = 1;
+    }
+
+    optional Status status = 3;
+}

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package a3;
+
+message Book {
+    optional string ISBN = 1;
+    optional string title = 2;
+    optional string author = 3;
+
+    enum Genre {
+        FANTASY = 0;
+        SCIFI = 1;
+        MYSTERY = 2;
+        NONFICTION = 3;
+    }
+
+    optional Genre genre = 4;
+    optional int32 publishedYear = 5;
+}
