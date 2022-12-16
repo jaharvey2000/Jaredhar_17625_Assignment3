@@ -15,10 +15,51 @@ class InventoryClient:
         self.channel = grpc.insecure_channel(self.host)
         self.stub = inventoryService_pb2_grpc.InventoryServiceStub(self.channel)
 
-    def getGenreFromString(self, newBook, newGenre):
-        return 0
+    def getGenreFromString(self, newGenre):
+        '''
+        Get the Genre enumeration value according to the Book protobuf.
 
-    def CreateBook(self, newISBN, newAuthor, newTitle, newGenre, newYear):
+        Parameters
+        ----------
+        newGenre : str
+            a string representation of the genre
+
+        Returns
+        -------
+        an integer with the Genre's enumeration value
+        '''
+
+        genreDict = {
+            'fantasy': 0,
+            'scifi': 1,
+            'mystery': 2,
+            'nonfiction': 3
+        }
+        return genreDict[newGenre.lower()]
+
+    def CreateBook(self, newISBN, newTitle, newAuthor, newGenre, newYear):
+        '''
+        Wrapper function for the CreateBook RPC
+
+        Parameters
+        ----------
+        newISBN : str
+            the ISBN of the book to add, may not be null
+        newTitle : str
+            the title of the book to add, may not be null
+        newAuthor : str
+            the author of the book to add, may not be null
+        newGenre : str
+            the genre of the book to add, may not be null
+        newYear : str
+            the publication year of the book to add, may not be null
+        
+        Returns
+        -------
+        The API response
+        '''
+
+        # Reject any missing inputs
         if newISBN is None:
             raise Exception('Argument "newISBN" cannot be None')
         elif newAuthor is None:
@@ -40,7 +81,6 @@ class InventoryClient:
 
         # Send the response
         try:
-            # If the request is successful, print the result
             response = self.stub.CreateBook(
                 inventoryService_pb2.CreateBookRequest(book=newBook))
             return response.message
@@ -48,12 +88,25 @@ class InventoryClient:
             raise e
 
     def GetBook(self, searchISBN):
+        '''
+        Wrapper function for the GetBook RPC
+
+        Parameters
+        ----------
+        searchISBN : str
+            the ISBN of the book to search for
+        
+        Returns
+        -------
+        The API response
+        '''
+
+        # Reject invalid input
         if searchISBN is None:
             raise Exception('Argument "searchISBN" cannot be None')
 
         # Send the response
         try:
-            # If the request is successful, print the result
             response = self.stub.GetBook(
                 inventoryService_pb2.GetBookRequest(ISBN=searchISBN))
             return response.book

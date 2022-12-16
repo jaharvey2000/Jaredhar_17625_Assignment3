@@ -7,6 +7,7 @@ from unittest.mock import Mock
 # 1. Implement mock API client
 mockClient = Mock(spec=InventoryClient)
 
+# Basic Book object mock (for book.title access)
 class Book:
     def __init__(self, title):
         self.title = title
