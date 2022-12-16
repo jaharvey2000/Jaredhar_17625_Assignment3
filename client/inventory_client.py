@@ -45,7 +45,7 @@ class InventoryClient:
                 inventoryService_pb2.CreateBookRequest(book=newBook))
             return response.message
         except grpc.RpcError as e:
-            return e.details()
+            raise e
 
     def GetBook(self, searchISBN):
         if searchISBN is None:
@@ -58,4 +58,4 @@ class InventoryClient:
                 inventoryService_pb2.GetBookRequest(ISBN=searchISBN))
             return response.book
         except grpc.RpcError as e:
-            return e.details()
+            raise e
